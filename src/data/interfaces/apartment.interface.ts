@@ -1,10 +1,10 @@
 import { Document, Types } from 'mongoose';
-import { ITenant } from './tenant.interface';
-import { IUser } from './user.interface';
-import { IExpense } from './expense.interface';
-import { ILease } from './lease.interface';
+import { ITenant } from '../../models/interfaces/tenant.interface';
+import { IUser } from '../../models/interfaces/user.interface';
+import { IExpense } from '../../models/interfaces/expense.interface';
+import { ILease } from '../../models/interfaces/lease.interface';
 
-interface IApartment extends Document {
+interface IApartmentSchema extends Document {
     owner: Types.ObjectId | IUser;
     name: string;
     city: string;
@@ -29,4 +29,4 @@ interface IApartment extends Document {
     isDelete: boolean;
 }
 
-export { IApartment };
+export { IApartmentSchema };

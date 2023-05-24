@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose';
-import { IApartment } from './apartment.interface';
 import { ITenant } from './tenant.interface';
+import { IApartmentSchema } from '../../data/interfaces/apartment.interface';
 
 interface IUser extends Document {
     firstName: string;
@@ -8,7 +8,7 @@ interface IUser extends Document {
     mobile: string;
     email: string;
     password: string;
-    apartments: (IApartment | Types.ObjectId)[];
+    apartments: (IApartmentSchema | Types.ObjectId)[];
     tenants: (ITenant | Types.ObjectId)[];
 }
 

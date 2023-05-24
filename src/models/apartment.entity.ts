@@ -1,7 +1,7 @@
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { IApartment } from "./interfaces/apartment.interface";
+import { IApartmentSchema } from "../data/interfaces/apartment.interface";
 
-const apartmentSchema = new MongooseSchema<IApartment>({
+const apartmentSchema = new MongooseSchema<IApartmentSchema>({
     owner: {
         type: MongooseSchema.Types.ObjectId,
         ref: 'User',
@@ -91,5 +91,5 @@ const apartmentSchema = new MongooseSchema<IApartment>({
         required: true
     },
 })
-const ApartmentEntity = mongoose.model<IApartment>('Apartment', apartmentSchema);
+const ApartmentEntity = mongoose.model<IApartmentSchema>('Apartment', apartmentSchema);
 export { ApartmentEntity };

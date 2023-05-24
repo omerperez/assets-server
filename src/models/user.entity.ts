@@ -1,7 +1,7 @@
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { IUser } from "./interfaces/user.interface";
+import { IUserSchema } from "../data/interfaces/user.interfaces";
 
-const userSchema = new MongooseSchema<IUser>({
+const userSchema = new MongooseSchema<IUserSchema>({
     firstName: {
         type: String,
         required: true,
@@ -38,6 +38,6 @@ const userSchema = new MongooseSchema<IUser>({
     ]
 })
 
-const UserEntity = mongoose.model<IUser>('User', userSchema);
+const UserEntity = mongoose.model<IUserSchema>('User', userSchema);
 
 export { UserEntity };

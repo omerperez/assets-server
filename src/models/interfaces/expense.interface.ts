@@ -1,12 +1,12 @@
 import { Document, Types } from 'mongoose';
-import { IApartment } from './apartment.interface';
+import { IApartmentSchema } from '../../data/interfaces/apartment.interface';
 
 interface IExpense extends Document {
     name: string;
     price: number;
     description?: string;
     files?: string[]
-    apartment: IApartment | Types.ObjectId;
+    apartment: IApartmentSchema | Types.ObjectId;
     createDate: Date;
     editDate: Date;
     isDeleted: boolean;
