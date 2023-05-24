@@ -18,6 +18,10 @@ const expenseSchema = new MongooseSchema<IExpense>({
         type: [String],
         require: false,
     },
+    apartment: {
+        type: MongooseSchema.Types.ObjectId,
+        ref: "Apartment"
+    },
     editDate: {
         type: Date,
         require: true,

@@ -1,7 +1,8 @@
 import { Document, Types } from 'mongoose';
-import { IUser } from './user.interface';
 import { ITenant } from './tenant.interface';
+import { IUser } from './user.interface';
 import { IExpense } from './expense.interface';
+import { ILease } from './lease.interface';
 
 interface IApartment extends Document {
     owner: Types.ObjectId | IUser;
@@ -21,10 +22,11 @@ interface IApartment extends Document {
     images: string[]
     mainImageIndex: number;
     comment?: string;
-    isDelete: boolean;
     currentTenant: Types.ObjectId | ITenant;
-    tenants: (Types.ObjectId | ITenant)[],
-    expenses: (Types.ObjectId | IExpense)[],
+    tenants: (Types.ObjectId | ITenant)[];
+    expenses: (Types.ObjectId | IExpense)[];
+    currentLease: (Types.ObjectId | ILease);
+    isDelete: boolean;
 }
 
 export { IApartment };

@@ -70,13 +70,25 @@ const apartmentSchema = new MongooseSchema<IApartment>({
         type: String,
         require: false,
     },
-    isDelete: {
-        type: Boolean,
-        required: true
-    },
     currentTenant: {
         type: MongooseSchema.Types.ObjectId,
         ref: 'Tenant'
+    },
+    tenants: [{
+        type: MongooseSchema.Types.ObjectId,
+        ref: 'Tenant'
+    }],
+    expenses: [{
+        type: MongooseSchema.Types.ObjectId,
+        ref: 'Expense'
+    }],
+    currentLease: {
+        type: MongooseSchema.Types.ObjectId,
+        ref: 'Lease'
+    },
+    isDelete: {
+        type: Boolean,
+        required: true
     },
 })
 const ApartmentEntity = mongoose.model<IApartment>('Apartment', apartmentSchema);
