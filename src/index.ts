@@ -1,14 +1,26 @@
 import express from "express";
-const app = express();
-const port = 3005; // default port to listen
+import bodyParser from "body-parser";
+import cors from "cors";
+import { config } from "dotenv";
+import { EXPRESS_GENERAL } from "./assets/constants";
+import { db } from "./configuration/db";
 
-// define a route handler for the default home page
+config();
+const app = express();
+app.use(cors());
+app.use(
+  bodyParser.urlencoded({ limit: EXPRESS_GENERAL.LIMIT, extended: false })
+);
+const { PORT } = process.env;
+
+db.on("error", (error) => {
+  console.log(`MongoDB error: ${error}`);
+})
+
 app.get("/", (req, res) => {
   res.send("Hello world!");
 });
 
-// start the Express server
-app.listen(port, () => {
-  // console.log("omer")
-  console.log(`server started at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`server started at http://localhost:${PORT}`);
 });
