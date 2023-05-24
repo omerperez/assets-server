@@ -1,6 +1,7 @@
 import { Document, Types } from 'mongoose';
 import { IUser } from './user.interface';
 import { ITenant } from './tenant.interface';
+import { IExpense } from './expense.interface';
 
 interface IApartment extends Document {
     owner: Types.ObjectId | IUser;
@@ -22,7 +23,8 @@ interface IApartment extends Document {
     comment?: string;
     isDelete: boolean;
     currentTenant: Types.ObjectId | ITenant;
-    tenants: (Types.ObjectId | ITenant)[]
+    tenants: (Types.ObjectId | ITenant)[],
+    expenses: (Types.ObjectId | IExpense)[],
 }
 
 export { IApartment };

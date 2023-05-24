@@ -81,7 +81,7 @@ const apartmentSchema = new MongooseSchema<IApartment>({
     tenants: [{
         type: MongooseSchema.Types.ObjectId,
         ref: 'Tenant'
-    }]
+    }],
 })
 const ApartmentEntity = mongoose.model<IApartment>('Apartment', apartmentSchema);
 export { ApartmentEntity };
