@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/omerperez/assets-server/issues"
   },
-  "homepage": "https://github.com/omerperez/assets-server#readme"
+  "homepage": "https://github.com/omerperez/assets-server#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
