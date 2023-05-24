@@ -45,10 +45,6 @@ const tenantSchema = new MongooseSchema<ITenant>({
         type: Date,
         required: false,
     },
-    apartment: {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Apartment'
-    },
     owner: {
         type: MongooseSchema.Types.ObjectId,
         ref: 'User'

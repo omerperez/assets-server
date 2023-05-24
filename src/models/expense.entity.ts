@@ -8,7 +8,7 @@ const expenseSchema = new MongooseSchema<IExpense>({
     },
     price: {
         type: Number,
-        require: true,
+        require: false,
     },
     description: {
         type: String,
@@ -18,10 +18,6 @@ const expenseSchema = new MongooseSchema<IExpense>({
         type: [String],
         require: false,
     },
-    createDate: {
-        type: Date,
-        require: true,
-    },
     editDate: {
         type: Date,
         require: true,
@@ -30,11 +26,13 @@ const expenseSchema = new MongooseSchema<IExpense>({
         type: Boolean,
         require: true,
     },
-    apartment: {
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Apartment'
+    isExpense: {
+        type: Boolean,
+        require: true,
     }
+}, {
+    timestamps: { createdAt: 'createDate' },
 })
 
-const ReleaseEntity = mongoose.model<IExpense>('Expense', expenseSchema);
-export { ReleaseEntity };
+const ExpenseEntity = mongoose.model<IExpense>('Expense', expenseSchema);
+export { ExpenseEntity };

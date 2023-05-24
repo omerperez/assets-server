@@ -2,6 +2,7 @@ import { Types } from "mongoose"
 import { IApartment } from "./apartment.interface"
 import { IExpense } from "./expense.interface"
 import { ITenant } from "./tenant.interface"
+import { ILease } from "./lease.interface"
 
 interface IExpenseApartment {
     apartment: IApartment | Types.ObjectId
@@ -13,4 +14,9 @@ interface ITenantApartment {
     tenant: ITenant | Types.ObjectId
 }
 
-export { IExpenseApartment, ITenantApartment };
+interface ILeaseApartment {
+    apartment: IApartment | Types.ObjectId;
+    lease: ILease | Types.ObjectId
+}
+
+export { IExpenseApartment, ITenantApartment, ILeaseApartment };

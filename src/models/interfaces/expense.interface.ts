@@ -1,5 +1,4 @@
-import { Document, Types } from 'mongoose';
-import { IApartment } from './apartment.interface';
+import { Document } from 'mongoose';
 
 interface IExpense extends Document {
     name: string;
@@ -9,7 +8,7 @@ interface IExpense extends Document {
     createDate: Date;
     editDate: Date;
     isDeleted: boolean;
-    apartment: IApartment | Types.ObjectId;
+    isExpense: boolean;
 }
 
-export { IExpense }
+export { IExpense };
