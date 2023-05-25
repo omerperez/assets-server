@@ -1,8 +1,18 @@
-import { RegisterUserBody } from "../src/data/interfaces/user.interfaces";
-import { IUser } from "../src/models/interfaces/user.interface";
-import { UserEntity as userSchema } from "../src/models/user.entity";
+import { RegisterUserBody } from "../data/interfaces/user.interfaces";
+import { IUser } from "../models/interfaces/user.interface";
+import { UserEntity as userSchema } from "../models/user.entity";
 
-const findUserByMobile = async (mobile: string): Promise<IUser | null> => {
+const findById = async (id: string): Promise<IUser | null> => {
+    try {
+        return await userSchema.findById(id)
+    } catch (error) {
+        console.error('Error finding user by id:', error);
+        throw error;
+    }
+}
+
+
+const findByMobile = async (mobile: string): Promise<IUser | null> => {
     try {
         return await userSchema.findOne({ mobile: mobile })
     } catch (error) {
@@ -35,8 +45,24 @@ const createUser = async (user: RegisterUserBody): Promise<IUser> => {
     }
 }
 
+const update = async (user: IUser) => {
+    try {
+        const currentUser = await userSchema.findById(user._id);
+        if (!currentUser) {
+            throw new Error('User not found');
+        }
+        Object.assign(currentUser, user);
+        await currentUser.save();
+        return currentUser;
+    } catch (error) {
+        console.error('Error update user:', error);
+        throw error;
+    }
+}
+
+
 const userRepository = {
-    findUserByMobile, isExistingUser, createUser
+    findById, findByMobile, isExistingUser, createUser, update,
 }
 
 export default userRepository

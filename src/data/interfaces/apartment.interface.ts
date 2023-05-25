@@ -29,4 +29,29 @@ interface IApartmentSchema extends Document {
     isDelete: boolean;
 }
 
-export { IApartmentSchema };
+interface CreateApartmentBody {
+    owner: string;
+    name: string;
+    city: string;
+    neighborhood?: string;
+    street: string;
+    number: number;
+    floor?: number;
+    apartmentNumber?: number;
+    postCode?: string;
+    price: number;
+    area: number;
+    toiletCount: number;
+    isAnimalsConfirm: number;
+    includedPayments: string[];
+    // images: string[]
+    mainImageIndex: number;
+    comment?: string;
+    // currentTenant: Types.ObjectId | ITenant;
+    // tenants: (Types.ObjectId | ITenant)[];
+    // expenses: (Types.ObjectId | IExpense)[];
+    // currentLease: (Types.ObjectId | ILease);
+    // isDelete: boolean;
+}
+
+export { IApartmentSchema, CreateApartmentBody };

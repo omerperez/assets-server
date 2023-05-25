@@ -1,10 +1,9 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import userRepository from "../../repositories/user.repo";
-import { RegisterUserBody } from "../data/interfaces/user.interfaces";
+import userService from "./user.service";
 
 const login = async (mobile: string, password: string): Promise<string> => {
-    const user = await userRepository.findUserByMobile(mobile);
+    const user = await userService.findByMobile(mobile);
     try {
         if (!user) {
             throw new Error('User not found');
