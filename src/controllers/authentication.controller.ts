@@ -4,10 +4,9 @@ import authService from "../services/authentication.service";
 const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { mobile, password } = req.body;
-        const token = await authService.login(mobile, password);
-        return res.status(200).send({ token })
+        const { user, token } = await authService.login(mobile, password);
+        return res.cookie('token', token, { httpOnly: true, secure: true }).json({ user, token });
     } catch (error) {
-        res.status(error.code).send();
         next(error);
     }
 }
@@ -18,7 +17,7 @@ const verify = (req: Request, res: Response, next: NextFunction) => {
         const decoded = authService.verify(token);
         return res.status(200).send(decoded)
     } catch (error) {
-        res.sendStatus(403);
+        error.statusCode = 401;
         next(error);
     }
 }

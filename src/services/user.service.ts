@@ -1,23 +1,23 @@
-import userRepository from "../repositories/user.repo";
-import { RegisterUserBody } from "../data/interfaces/user.interfaces";
-import authService from "./authentication.service";
-import { IUser } from "../models/interfaces/user.interface";
 import { Types } from "mongoose";
+import { RegisterUserDto } from "../data/dto/user.dto";
 import { IApartmentSchema } from "../data/interfaces/apartment.interface";
+import { IUser } from "../models/interfaces/user.interface";
+import userRepository from "../repositories/user.repo";
+import authService from "./authentication.service";
 
 const findById = async (id: string) => {
     return await userRepository.findById(id);
 }
 
-const findByMobile = async (mobile: string) => {
+const findByMobile = async (mobile: string): Promise<IUser | null> => {
     return await userRepository.findByMobile(mobile);
 }
 
-const register = async (user: RegisterUserBody) => {
+const register = async (user: RegisterUserDto) => {
     try {
         const isExistingUser = await userRepository.isExistingUser(user.mobile, user.email);
         if (isExistingUser) {
-            throw new Error('Mobile or email already exists');
+            throw Object.assign(new Error('Mobile or email already exists'), { statusCode: 409 });
         }
         const hashPassword = await authService.hashPassword(user.password);
         user.password = hashPassword;

@@ -1,4 +1,4 @@
-import { RegisterUserBody } from "../data/interfaces/user.interfaces";
+import { RegisterUserDto } from "../data/dto/user.dto";
 import { IUser } from "../models/interfaces/user.interface";
 import { UserEntity as userSchema } from "../models/user.entity";
 
@@ -11,10 +11,9 @@ const findById = async (id: string): Promise<IUser | null> => {
     }
 }
 
-
 const findByMobile = async (mobile: string): Promise<IUser | null> => {
     try {
-        return await userSchema.findOne({ mobile: mobile })
+        return await userSchema.findOne({ mobile })
     } catch (error) {
         console.error('Error finding user:', error);
         throw error;
@@ -34,7 +33,7 @@ const isExistingUser = async (mobile: string, email: string): Promise<boolean> =
     }
 }
 
-const createUser = async (user: RegisterUserBody): Promise<IUser> => {
+const createUser = async (user: RegisterUserDto): Promise<IUser> => {
     try {
         const newUser = new userSchema(user);
         const savedUser: IUser = await newUser.save();
@@ -49,7 +48,7 @@ const update = async (user: IUser) => {
     try {
         const currentUser = await userSchema.findById(user._id);
         if (!currentUser) {
-            throw new Error('User not found');
+            throw Object.assign(new Error('User not found'), { statusCode: 404 });
         }
         Object.assign(currentUser, user);
         await currentUser.save();

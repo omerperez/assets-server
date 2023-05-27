@@ -13,13 +13,12 @@ interface IUserSchema extends Document {
     tenants: (ITenant | Types.ObjectId)[];
 }
 
-
-interface RegisterUserBody {
+interface UserJwtPayload {
+    id: string;
+    mobile: string;
     firstName: string;
     lastName: string;
-    mobile: string;
-    password: string;
     email: string;
 }
 
-export { RegisterUserBody, IUserSchema }
+export { IUserSchema, UserJwtPayload }

@@ -46,6 +46,10 @@ const apartmentSchema = new MongooseSchema<IApartmentSchema>({
         type: Number,
         require: true,
     },
+    rooms: {
+        type: Number,
+        require: true,
+    },
     toiletCount: {
         type: Number,
         require: true,
