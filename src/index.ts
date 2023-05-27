@@ -18,9 +18,6 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: EXPRESS_GENERAL.LIMIT }));
 
-// app.use(
-//   bodyParser.urlencoded({ extended: false })
-// );
 const { PORT } = process.env;
 
 db.on("error", (error) => {

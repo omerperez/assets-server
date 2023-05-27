@@ -26,8 +26,6 @@ interface IParams {
 
 const uploadToS3 = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("here")
-        console.log("req.files", req.body.files)
         if (!req.files) {
             req.body.fileLocations = [];
             return next();
@@ -54,9 +52,6 @@ const uploadToS3 = async (req: Request, res: Response, next: NextFunction) => {
                 fileLocations.push(data.Location);
             })
         )
-        // const promises = filesArray.map((file: Express.Multer.File) => {
-        // });
-        // await Promise.all(promises);
         req.body.fileLocations = fileLocations;
         next();
     } catch (error) {

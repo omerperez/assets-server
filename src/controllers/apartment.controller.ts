@@ -19,7 +19,6 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
         const { apartmentDetails, fileLocations: images } = body;
         const data = (apartmentDetails as string).trim();
         const apartmentData: CreateApartmentDto = JSON.parse(data);
-        console.log("apartmentDetails", apartmentDetails);
         const apartment = await apartmentService.create(apartmentData, images, user);
         res.status(200).send(apartment);
     } catch (error) {
