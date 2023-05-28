@@ -10,6 +10,7 @@ import { errorMiddleware } from "./middleware/error.middleware";
 import cookieParser from 'cookie-parser';
 import apartmentRouter from "./routes/apartment.router";
 import verifyToken from "./middleware/verify.middleware";
+import tenantRouter from "./routes/tenant.router"
 
 config();
 const app = express();
@@ -27,6 +28,7 @@ db.on("error", (error) => {
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/apartment", verifyToken, apartmentRouter);
+app.use("/tenant", verifyToken, tenantRouter);
 
 app.use(errorMiddleware)
 

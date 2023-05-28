@@ -34,7 +34,6 @@ const uploadToS3 = async (req: Request, res: Response, next: NextFunction) => {
         const fileLocations: string[] = [];
         await Promise.all(
             filesArray.map(async (file) => {
-                console.log(file)
                 let params: IParams = {
                     Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
                     Key: `${uuidv4()}-${file.originalname}`,
@@ -47,7 +46,6 @@ const uploadToS3 = async (req: Request, res: Response, next: NextFunction) => {
                         ContentType: "application/pdf",
                     }
                 }
-                console.log("params", params);
                 const data = await s3.upload(params).promise();
                 fileLocations.push(data.Location);
             })

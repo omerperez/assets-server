@@ -1,7 +1,7 @@
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { ITenant } from "./interfaces/tenant.interface";
+import { ITenantSchema } from "../data/interfaces/tenant.interface";
 
-const tenantSchema = new MongooseSchema<ITenant>({
+const tenantSchema = new MongooseSchema<ITenantSchema>({
     id: {
         type: String,
         unique: true,
@@ -34,16 +34,24 @@ const tenantSchema = new MongooseSchema<ITenant>({
         required: true,
     },
     birthday: {
-        type: Date,
+        type: String,
         required: false,
     },
     enteryDate: {
-        type: Date,
+        type: String,
         required: false,
     },
     endDate: {
-        type: Date,
+        type: String,
         required: false,
+    },
+    isDelete: {
+        type: Boolean,
+        required: true,
+    },
+    apartment: {
+        type: MongooseSchema.Types.ObjectId,
+        ref: 'Apartment'
     },
     owner: {
         type: MongooseSchema.Types.ObjectId,
@@ -51,6 +59,6 @@ const tenantSchema = new MongooseSchema<ITenant>({
     }
 })
 
-const TenantEntity = mongoose.model<ITenant>('Tenant', tenantSchema);
+const TenantEntity = mongoose.model<ITenantSchema>('Tenant', tenantSchema);
 
 export { TenantEntity };

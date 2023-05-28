@@ -1,8 +1,8 @@
 import { Document, Types } from 'mongoose';
-import { IUser } from './user.interface';
 import { IApartmentSchema } from '../../data/interfaces/apartment.interface';
+import { IUserSchema } from './user.interfaces';
 
-interface ITenant extends Document {
+interface ITenantSchema extends Document {
     id: string;
     firstName: string;
     lastName: string;
@@ -10,11 +10,12 @@ interface ITenant extends Document {
     anotherMobile: string;
     email: string;
     gender: number;
-    birthday: Date,
-    enteryDate: Date,
-    endDate: Date,
+    birthday: string,
+    enteryDate: string,
+    endDate: string,
+    isDelete: boolean,
     apartment: Types.ObjectId | IApartmentSchema
-    owner: Types.ObjectId | IUser
+    owner: Types.ObjectId | IUserSchema
 }
 
-export { ITenant };
+export { ITenantSchema };

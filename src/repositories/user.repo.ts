@@ -1,10 +1,11 @@
+import { IUserSchema } from "../data/interfaces/user.interfaces";
 import { RegisterUserDto } from "../data/dto/user.dto";
 import { IUser } from "../models/interfaces/user.interface";
 import { UserEntity as userSchema } from "../models/user.entity";
 
-const findById = async (id: string): Promise<IUser | null> => {
+const findById = async (id: string): Promise<IUserSchema | null> => {
     try {
-        return await userSchema.findById(id)
+        return await userSchema.findById(id).exec();
     } catch (error) {
         console.error('Error finding user by id:', error);
         throw error;

@@ -1,8 +1,8 @@
 import { Document, Types } from 'mongoose';
-import { ITenant } from '../../models/interfaces/tenant.interface';
 import { IUser } from '../../models/interfaces/user.interface';
 import { IExpense } from '../../models/interfaces/expense.interface';
 import { ILease } from '../../models/interfaces/lease.interface';
+import { ITenantSchema } from './tenant.interface';
 
 interface IApartmentSchema extends Document {
     owner: Types.ObjectId | IUser;
@@ -23,8 +23,8 @@ interface IApartmentSchema extends Document {
     images: string[]
     mainImageIndex: number;
     comment?: string;
-    currentTenant: Types.ObjectId | ITenant;
-    tenants: (Types.ObjectId | ITenant)[];
+    currentTenant: Types.ObjectId | ITenantSchema;
+    tenants: (Types.ObjectId | ITenantSchema)[];
     expenses: (Types.ObjectId | IExpense)[];
     currentLease: (Types.ObjectId | ILease);
     isDelete: boolean;

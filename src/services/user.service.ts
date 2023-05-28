@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { ITenantSchema } from "../data/interfaces/tenant.interface";
 import { RegisterUserDto } from "../data/dto/user.dto";
 import { IApartmentSchema } from "../data/interfaces/apartment.interface";
 import { IUser } from "../models/interfaces/user.interface";
@@ -31,16 +32,27 @@ const register = async (user: RegisterUserDto) => {
 const updateUser = async (update: IUser) => {
     return await userRepository.update(update);
 }
-const addApartment = (user: IUser, apartmentId: Types.ObjectId | IApartmentSchema) => {
+
+const addApartment = async (user: IUser, apartmentId: Types.ObjectId | IApartmentSchema) => {
     if (!Array.isArray(user.apartments)) {
         user.apartments = [];
     }
     user.apartments.push(apartmentId);
-    return user;
+    return await updateUser(user);
+
 }
 
+const addTenant = async (user: IUser, tenantId: Types.ObjectId | ITenantSchema) => {
+    if (!Array.isArray(user.tenants)) {
+        user.tenants = [];
+    }
+    user.tenants.push(tenantId);
+    return await updateUser(user);
+}
+
+
 const userService = {
-    findById, findByMobile, register, updateUser, addApartment
+    findById, findByMobile, register, updateUser, addApartment, addTenant
 }
 
 export default userService;

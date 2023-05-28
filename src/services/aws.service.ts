@@ -28,7 +28,6 @@ const uploadSingleFile = async (
     filename: string
 ): Promise<string> => {
     const { AWS_PUBLIC_BUCKET_NAME } = process.env;
-
     const { Location: location } = await s3
         .upload({
             Bucket: AWS_PUBLIC_BUCKET_NAME as string,

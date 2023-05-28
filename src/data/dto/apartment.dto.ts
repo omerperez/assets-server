@@ -17,9 +17,14 @@ interface CreateApartmentDto {
     comment?: string;
 }
 
+interface EditApartmentDto extends CreateApartmentDto {
+    id: string;
+    images: string[];
+}
+
 interface UploadedFile {
     buffer: Buffer;
     originalname: string;
 }
 
-export { CreateApartmentDto, UploadedFile }
+export { CreateApartmentDto, EditApartmentDto, UploadedFile }
