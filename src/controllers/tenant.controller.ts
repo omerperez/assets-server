@@ -6,9 +6,18 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { user, body } = req;
         const tenantData: CreateTenantDto = body;
-        console.log("tenantData", tenantData)
         const tenant = await tenantService.create(tenantData, user);
-        console.log("tenant", tenant)
+        return res.status(200).send(tenant);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { user, body } = req;
+        const tenantData: CreateTenantDto = body;
+        const tenant = await tenantService.update(tenantData, user);
         return res.status(200).send(tenant);
     } catch (error) {
         next(error);
@@ -16,7 +25,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const tenantController = {
-    create
+    create, update
 }
 
 export default tenantController;

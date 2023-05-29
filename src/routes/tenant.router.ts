@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/create', tenantController.create);
 
-router.post('/edit');
+router.post('/edit', tenantController.update);
 
 router.post('/delete');
 

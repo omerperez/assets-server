@@ -20,10 +20,34 @@ const create = async (tenant: CreateTenantDto, apartment: Types.ObjectId, user: 
         throw error;
     }
 }
+const findById = async (id: string): Promise<ITenantSchema | null> => {
+    try {
+        return await tenantSchema.findOne({ id }).exec();
+    } catch (error) {
+        console.error('Error finding tenant:', error);
+        throw error;
+    }
+}
 
+const update = async (tenant: CreateTenantDto, user: IUserSchema): Promise<ITenantSchema> => {
+    try {
+        const { id: ownerId } = user;
+        const existingTenant = await findById(tenant.id);
+        if (!existingTenant) {
+            throw new Error('Tenant not found');
+        }
+        if (!existingTenant.owner.equals(ownerId)) {
+            throw new Error('Access Denied');
+        }
+        return await tenantSchema.findOneAndUpdate(existingTenant._id, tenant, { new: true });
+    } catch (error) {
+        console.error('Update tenant error:', error);
+        throw error;
+    }
+}
 
 const userRepository = {
-    create,
+    create, update
 }
 
 export default userRepository

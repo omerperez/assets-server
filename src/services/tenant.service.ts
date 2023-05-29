@@ -27,9 +27,27 @@ const create = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<IT
     }
 }
 
+const update = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<ITenantSchema> => {
+    try {
+        const { id: ownerId } = user;
+        const currentUser = await userService.findById(ownerId);
+        if (!currentUser) {
+            throw Object.assign(new Error('User not found'), { statusCode: 404 });
+        }
+        const currentApartment = await apartmentService.findById(tenant.apartmentId, user.mobile);
+        if (!currentApartment) {
+            throw Object.assign(new Error('Apartment not found'), { statusCode: 404 });
+        }
+        const updateTenant = await tenantRepository.update(tenant, currentUser);
+        return updateTenant;
+    } catch (error) {
+        console.error('Create tenant error:', error);
+        throw error;
+    }
+}
 
 const tenantService = {
-    create
+    create, update
 }
 
 export default tenantService;
