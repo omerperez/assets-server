@@ -36,17 +36,17 @@ const create = async (createApartment: CreateApartmentDto, images: string[], use
 const edit = async (updateApartment: EditApartmentDto, imagesArray: string[], userId: Types.ObjectId): Promise<IApartmentSchema | null> => {
     try {
         const { id, images, ...updatedProperties } = updateApartment;
-        let existingApartment = await findById(updateApartment.id);
+        const existingApartment = await findById(updateApartment.id);
         if (!existingApartment) {
             throw new Error('Apartment not found');
         }
-        const update = {
+        const updateObject = {
             ...updateApartment,
             images: updateApartment.images.concat(imagesArray),
             comment: updatedProperties.comment
         }
-        delete update.id;
-        return await apartmentSchema.findOneAndUpdate(existingApartment._id, update, { new: true });
+        delete updateObject.id;
+        return await apartmentSchema.findOneAndUpdate(existingApartment._id, updateObject, { new: true });
     } catch (error) {
         console.error('Error edit apartment:', error);
         throw error;
@@ -55,14 +55,14 @@ const edit = async (updateApartment: EditApartmentDto, imagesArray: string[], us
 
 const deleteApartment = async (apartmentId: string, userId: Types.ObjectId): Promise<void> => {
     try {
-        let existingApartment = await findById(apartmentId);
+        const existingApartment = await findById(apartmentId);
         if (!existingApartment) {
             throw new Error('Apartment not found');
         }
-        const update = {
+        const updateObject = {
             isDelete: true
         }
-        return await apartmentSchema.findOneAndUpdate(existingApartment._id, update, { new: true });
+        return await apartmentSchema.findOneAndUpdate(existingApartment._id, updateObject, { new: true });
     } catch (error) {
         console.error('Error edit apartment:', error);
         throw error;

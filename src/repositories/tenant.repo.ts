@@ -11,7 +11,7 @@ const create = async (tenant: CreateTenantDto, apartment: Types.ObjectId, user: 
             ...tenant,
             owner: user._id,
             isDelete: false,
-            apartment: apartment
+            apartment
         });
         const savedTenant: ITenantSchema = await newTenant.save();
         return savedTenant;

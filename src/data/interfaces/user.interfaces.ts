@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { IApartmentSchema } from './apartment.interface';
-import { ITenant } from '../../models/interfaces/tenant.interface';
+import { ITenantSchema } from "./tenant.interface";
 
 
 interface IUserSchema extends Document {
@@ -10,7 +10,7 @@ interface IUserSchema extends Document {
     email: string;
     password: string;
     apartments: (IApartmentSchema | Types.ObjectId)[];
-    tenants: (ITenant | Types.ObjectId)[];
+    tenants: (ITenantSchema | Types.ObjectId)[];
 }
 
 interface UserJwtPayload {

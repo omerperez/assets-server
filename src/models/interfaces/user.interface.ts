@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { ITenant } from './tenant.interface';
+import { ITenantSchema } from '../../data/interfaces/tenant.interface';
 import { IApartmentSchema } from '../../data/interfaces/apartment.interface';
 
 interface IUser extends Document {
@@ -9,7 +9,7 @@ interface IUser extends Document {
     email: string;
     password: string;
     apartments: (IApartmentSchema | Types.ObjectId)[];
-    tenants: (ITenant | Types.ObjectId)[];
+    tenants: (ITenantSchema | Types.ObjectId)[];
 }
 
 export { IUser };
