@@ -23,7 +23,7 @@ interface IApartmentSchema extends Document {
     images: string[]
     mainImageIndex: number;
     comment?: string;
-    currentTenant: Types.ObjectId | ITenantSchema;
+    currentTenant?: Types.ObjectId | ITenantSchema;
     tenants: (Types.ObjectId | ITenantSchema)[];
     expenses: (Types.ObjectId | IExpense)[];
     currentLease: (Types.ObjectId | ILease);

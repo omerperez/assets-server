@@ -1,10 +1,10 @@
+import { Types } from "mongoose";
 import { CreateTenantDto } from "../data/dto/tenant.dto";
 import { ITenantSchema } from "../data/interfaces/tenant.interface";
 import { UserJwtPayload } from "../data/interfaces/user.interfaces";
 import tenantRepository from "../repositories/tenant.repo";
 import apartmentService from "./apartment.service";
 import userService from "./user.service";
-
 const create = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<ITenantSchema> => {
     try {
         const { id: ownerId } = user;
@@ -46,8 +46,26 @@ const update = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<IT
     }
 }
 
+const deleteTenant = async (tenantId: string, user: UserJwtPayload): Promise<void> => {
+    try {
+        const { id: ownerId } = user;
+        const currentUser = await userService.findById(ownerId);
+        if (!currentUser) {
+            throw Object.assign(new Error('User not found'), { statusCode: 404 });
+        }
+        const currentTenant = currentUser.tenants.find((tenant: Types.ObjectId) => tenant.equals(tenantId));
+        if (!currentTenant) {
+            throw Object.assign(new Error('Access Denied'), { statusCode: 401 });
+        }
+        return await tenantRepository.deleteTenant(tenantId);
+    } catch (error) {
+        console.error('Delete tenant error:', error);
+        throw error;
+    }
+}
+
 const tenantService = {
-    create, update
+    create, update, deleteTenant
 }
 
 export default tenantService;

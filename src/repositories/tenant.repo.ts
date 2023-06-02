@@ -20,6 +20,15 @@ const create = async (tenant: CreateTenantDto, apartment: Types.ObjectId, user: 
         throw error;
     }
 }
+const findByObjectId = async (id: string): Promise<ITenantSchema | null> => {
+    try {
+        return await tenantSchema.findById(id).exec();
+    } catch (error) {
+        console.error('Error finding tenant:', error);
+        throw error;
+    }
+}
+
 const findById = async (id: string): Promise<ITenantSchema | null> => {
     try {
         return await tenantSchema.findOne({ id }).exec();
@@ -34,10 +43,10 @@ const update = async (tenant: CreateTenantDto, user: IUserSchema): Promise<ITena
         const { id: ownerId } = user;
         const existingTenant = await findById(tenant.id);
         if (!existingTenant) {
-            throw new Error('Tenant not found');
+            throw Object.assign(new Error('Tenant not found'), { statusCode: 404 });
         }
         if (!existingTenant.owner.equals(ownerId)) {
-            throw new Error('Access Denied');
+            throw Object.assign(new Error('Access Denied'), { statusCode: 401 });
         }
         return await tenantSchema.findOneAndUpdate(existingTenant._id, tenant, { new: true });
     } catch (error) {
@@ -46,8 +55,23 @@ const update = async (tenant: CreateTenantDto, user: IUserSchema): Promise<ITena
     }
 }
 
+const deleteTenant = async (tenantId: string): Promise<void> => {
+    try {
+        const existingTenant = await findByObjectId(tenantId);
+        if (!existingTenant) {
+            throw new Error('Tenant not found');
+        }
+        const updateObject = {
+            isDelete: true
+        }
+        return await tenantSchema.findOneAndUpdate(existingTenant._id, updateObject, { new: true });
+    } catch (error) {
+        console.error('Error delete tenant:', error);
+        throw error;
+    }
+}
 const userRepository = {
-    create, update
+    create, update, deleteTenant
 }
 
 export default userRepository

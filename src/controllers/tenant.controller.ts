@@ -24,8 +24,24 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const deleteTenant = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("here");
+    try {
+        const { user, body } = req;
+        const { tenantId } = body;
+        const tenant = await tenantService.deleteTenant(tenantId, user);
+        res.status(200).send(tenant);
+    } catch (error) {
+        const err = error;
+        if (error.statusCode === 11000) {
+            err.message = Object.keys(error.keyPattern).toString()
+        }
+        next(error);
+    }
+}
+
 const tenantController = {
-    create, update
+    create, update, deleteTenant
 }
 
 export default tenantController;

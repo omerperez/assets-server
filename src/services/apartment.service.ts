@@ -64,9 +64,12 @@ const deleteApartment = async (apartmentId: string, user: UserJwtPayload): Promi
         if (!currentUser) {
             throw Object.assign(new Error('User not found'), { statusCode: 404 });
         }
-        return await apartmentRepository.deleteApartment(apartmentId, currentUser._id);
+        if (!currentUser.apartments.find((apartment: Types.ObjectId) => apartment.equals(apartmentId))) {
+            throw Object.assign(new Error('Access Denied'), { statusCode: 401 });
+        }
+        return await apartmentRepository.deleteApartment(apartmentId);
     } catch (error) {
-        console.error('Create apartment error:', error);
+        console.error('Delete apartment error:', error);
         throw error;
     }
 }
