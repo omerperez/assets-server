@@ -1,8 +1,8 @@
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { ILeaseApartment } from "./interfaces/relationship.interface";
+import { ILeaseApartmentSchema } from "../data/interfaces/relationship.interface";
 
 
-const leaseApartment = new MongooseSchema<ILeaseApartment>({
+const leaseApartment = new MongooseSchema<ILeaseApartmentSchema>({
     lease: {
         type: MongooseSchema.Types.ObjectId,
         ref: 'Lease'
@@ -21,6 +21,6 @@ const leaseApartment = new MongooseSchema<ILeaseApartment>({
     }
 })
 
-const LeaseApartmentEntity = mongoose.model<ILeaseApartment>('LeaseApartment', leaseApartment);
+const LeaseApartmentEntity = mongoose.model<ILeaseApartmentSchema>('LeaseApartment', leaseApartment);
 export { LeaseApartmentEntity };
 

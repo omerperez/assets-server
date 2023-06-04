@@ -5,6 +5,11 @@ import { UserJwtPayload } from "../data/interfaces/user.interfaces";
 import tenantRepository from "../repositories/tenant.repo";
 import apartmentService from "./apartment.service";
 import userService from "./user.service";
+
+const findById = async (tenantId: string | Types.ObjectId) => {
+    return await tenantRepository.getTenantById(tenantId);
+}
+
 const create = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<ITenantSchema> => {
     try {
         const { id: ownerId } = user;
@@ -46,6 +51,33 @@ const update = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<IT
     }
 }
 
+const changeTenant = async (tenantId: string, apartmentId: string, user: UserJwtPayload): Promise<ITenantSchema> => {
+    try {
+        const { id: ownerId } = user;
+        const currentUser = await userService.findById(ownerId);
+        if (!currentUser) {
+            throw Object.assign(new Error('User not found'), { statusCode: 404 });
+        }
+        const findTenant = await tenantRepository.getTenantById(tenantId);
+        if (!findTenant) {
+            throw Object.assign(new Error('Tenant not found'), { statusCode: 404 });
+        }
+        const currentApartment = await apartmentService.findById(apartmentId, user.mobile);
+        if (!currentApartment) {
+            throw Object.assign(new Error('Apartment not found'), { statusCode: 404 });
+        }
+        await apartmentService.update(currentApartment._id, {
+            currentTenant: findTenant._id,
+        })
+        console.log(findTenant)
+        return findTenant;
+    } catch (error) {
+        console.error('Create tenant error:', error);
+        throw error;
+    }
+}
+
+
 const deleteTenant = async (tenantId: string, user: UserJwtPayload): Promise<void> => {
     try {
         const { id: ownerId } = user;
@@ -65,7 +97,7 @@ const deleteTenant = async (tenantId: string, user: UserJwtPayload): Promise<voi
 }
 
 const tenantService = {
-    create, update, deleteTenant
+    findById, create, update, changeTenant, deleteTenant
 }
 
 export default tenantService;

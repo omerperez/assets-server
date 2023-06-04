@@ -4,6 +4,15 @@ import { ITenantSchema } from "../data/interfaces/tenant.interface";
 import { IUserSchema } from "../data/interfaces/user.interfaces";
 import { TenantEntity as tenantSchema } from "../models/tenant.entity";
 
+const getTenantById = async (id: string | Types.ObjectId): Promise<ITenantSchema | null> => {
+    try {
+        return await tenantSchema.findById(id);
+    } catch (error) {
+        console.log("Error find tenant:", error)
+        throw error;
+    }
+}
+
 const create = async (tenant: CreateTenantDto, apartment: Types.ObjectId, user: IUserSchema): Promise<ITenantSchema> => {
     try {
         delete tenant.apartmentId
@@ -70,8 +79,9 @@ const deleteTenant = async (tenantId: string): Promise<void> => {
         throw error;
     }
 }
-const userRepository = {
+const tenantRepository = {
+    getTenantById,
     create, update, deleteTenant
 }
 
-export default userRepository
+export default tenantRepository

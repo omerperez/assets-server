@@ -1,16 +1,18 @@
-import express from "express";
 import bodyParser from "body-parser";
+import cookieParser from 'cookie-parser';
 import cors from "cors";
 import { config } from "dotenv";
+import express from "express";
 import { EXPRESS_GENERAL } from "./assets/constants";
 import { db } from "./configuration/db";
-import authRouter from "./routes/authentication.router";
-import userRouter from "./routes/user.router";
 import { errorMiddleware } from "./middleware/error.middleware";
-import cookieParser from 'cookie-parser';
-import apartmentRouter from "./routes/apartment.router";
 import verifyToken from "./middleware/verify.middleware";
-import tenantRouter from "./routes/tenant.router"
+import apartmentRouter from "./routes/apartment.router";
+import authRouter from "./routes/authentication.router";
+import tenantRouter from "./routes/tenant.router";
+import userRouter from "./routes/user.router";
+import expenseRouter from "./routes/expense.router";
+import leaseRouter from "./routes/lease.router";
 
 config();
 const app = express();
@@ -28,6 +30,8 @@ db.on("error", (error) => {
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/apartment", verifyToken, apartmentRouter);
+app.use("/expense", verifyToken, expenseRouter);
+app.use("/lease", verifyToken, leaseRouter);
 app.use("/tenant", verifyToken, tenantRouter);
 
 app.use(errorMiddleware)

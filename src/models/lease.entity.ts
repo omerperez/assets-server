@@ -1,13 +1,13 @@
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { ILease } from "./interfaces/lease.interface";
+import { ILeaseSchema } from "../data/interfaces/lease.interface";
 
-const leaseSchema = new MongooseSchema<ILease>({
+const leaseSchema = new MongooseSchema<ILeaseSchema>({
     startDate: {
-        type: Date,
+        type: String,
         require: true,
     },
     endDate: {
-        type: Date,
+        type: String,
         require: true,
     },
     price: {
@@ -17,6 +17,10 @@ const leaseSchema = new MongooseSchema<ILease>({
     files: {
         type: [String],
         require: false,
+    },
+    createDate: {
+        type: Date,
+        require: true,
     },
     editDate: {
         type: Date,
@@ -30,5 +34,5 @@ const leaseSchema = new MongooseSchema<ILease>({
     timestamps: { createdAt: 'createDate' },
 })
 
-const LeaseEntity = mongoose.model<ILease>('Lease', leaseSchema);
+const LeaseEntity = mongoose.model<ILeaseSchema>('Lease', leaseSchema);
 export { LeaseEntity };

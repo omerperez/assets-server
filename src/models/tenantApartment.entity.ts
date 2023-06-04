@@ -1,5 +1,5 @@
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { ITenantApartment } from "./interfaces/relationship.interface";
+import { ITenantApartment } from "../data/interfaces/relationship.interface";
 
 
 const tenantApartmentSchema = new MongooseSchema<ITenantApartment>({

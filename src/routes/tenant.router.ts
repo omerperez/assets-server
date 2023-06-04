@@ -8,6 +8,8 @@ router.post('/create', tenantController.create);
 
 router.post('/edit', tenantController.update);
 
+router.post('/change', tenantController.changeTenant);
+
 router.post('/delete', tenantController.deleteTenant);
 
 export default router;

@@ -1,8 +1,8 @@
 import { Document } from 'mongoose';
 
-interface ILease extends Document {
-    startDate: Date;
-    endDate: Date;
+interface ILeaseSchema extends Document {
+    startDate: string;
+    endDate: string;
     price: number;
     files: string[];
     createDate: Date;
@@ -10,4 +10,4 @@ interface ILease extends Document {
     isDeleted: boolean;
 }
 
-export { ILease };
+export { ILeaseSchema };

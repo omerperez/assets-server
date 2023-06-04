@@ -82,10 +82,6 @@ const apartmentSchema = new MongooseSchema<IApartmentSchema>({
         type: MongooseSchema.Types.ObjectId,
         ref: 'Tenant'
     }],
-    expenses: [{
-        type: MongooseSchema.Types.ObjectId,
-        ref: 'Expense'
-    }],
     currentLease: {
         type: MongooseSchema.Types.ObjectId,
         ref: 'Lease'

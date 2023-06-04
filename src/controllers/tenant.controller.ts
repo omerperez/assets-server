@@ -24,8 +24,18 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const changeTenant = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { user, body } = req;
+        const { newTenantId, apartmentId } = body;
+        const tenant = await tenantService.changeTenant(newTenantId, apartmentId, user);
+        return res.status(200).send(tenant);
+    } catch (error) {
+        next(error);
+    }
+}
+
 const deleteTenant = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("here");
     try {
         const { user, body } = req;
         const { tenantId } = body;
@@ -41,7 +51,7 @@ const deleteTenant = async (req: Request, res: Response, next: NextFunction) => 
 }
 
 const tenantController = {
-    create, update, deleteTenant
+    create, update, deleteTenant, changeTenant
 }
 
 export default tenantController;

@@ -1,9 +1,8 @@
 import mongoose, { Schema as MongooseSchema } from "mongoose";
-import { IExpenseApartment } from "./interfaces/relationship.interface";
+import { IExpenseApartmentSchema } from "../data/interfaces/relationship.interface";
 
-
-const expenseApartment = new MongooseSchema<IExpenseApartment>({
-    expenses: {
+const expenseApartment = new MongooseSchema<IExpenseApartmentSchema>({
+    expense: {
         type: MongooseSchema.Types.ObjectId,
         ref: 'Expense'
     },
@@ -17,6 +16,6 @@ const expenseApartment = new MongooseSchema<IExpenseApartment>({
     }
 })
 
-const ExpenseApartmentEntity = mongoose.model<IExpenseApartment>('ExpenseApartment', expenseApartment);
+const ExpenseApartmentEntity = mongoose.model<IExpenseApartmentSchema>('ExpenseApartment', expenseApartment);
 export { ExpenseApartmentEntity };
 

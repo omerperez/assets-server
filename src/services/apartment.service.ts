@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import { CreateApartmentDto, EditApartmentDto } from "../data/dto/apartment.dto";
 import { IApartmentSchema } from "../data/interfaces/apartment.interface";
 import { ITenantSchema } from "../data/interfaces/tenant.interface";
@@ -27,6 +27,22 @@ const getAll = async (userId: string) => {
     const user = (await userService.findById(userId)).populate('apartments');
     const apartments = (await user).apartments as IApartmentSchema[];
     return apartments.filter((apartment) => !apartment.isDelete)
+}
+
+const find = async (userId: string, findObject: FilterQuery<IApartmentSchema>, selectText?: string): Promise<(IApartmentSchema)[]> => {
+    try {
+        const apartments = await apartmentRepository.find({
+            ...findObject,
+            owner: userId
+        }, selectText);
+        if (!apartments || apartments.length === 0) {
+            throw Object.assign(new Error('Apartments not found'), { statusCode: 404 });
+        }
+        return apartments;
+    } catch (error) {
+        console.error('Error finding apartment service:', error);
+        throw error;
+    }
 }
 
 const findById = async (apartmentId: string, userMobile: string): Promise<IApartmentSchema> => {
@@ -74,25 +90,26 @@ const deleteApartment = async (apartmentId: string, user: UserJwtPayload): Promi
     }
 }
 
-const update = async (apartment: IApartmentSchema) => {
-    return await apartmentRepository.update(apartment);
+const update = async (apartmentId: string | Types.ObjectId, updateObject: Partial<IApartmentSchema>): Promise<IApartmentSchema | null> => {
+    return await apartmentRepository.update(apartmentId, updateObject);
 }
 
 const addTenant = async (apartment: IApartmentSchema, tenantId: Types.ObjectId | ITenantSchema) => {
-    const currentTenant = apartment.currentTenant;
-    if (!currentTenant) {
-        apartment.currentTenant = tenantId;
-        return await update(apartment);
-    } else if (!Array.isArray(apartment.tenants)) {
+    if (!Array.isArray(apartment.tenants)) {
         apartment.tenants = [];
     }
-    apartment.tenants.push(currentTenant);
-    apartment.currentTenant = tenantId;
-    return await update(apartment);
+    if (apartment.currentTenant) {
+        apartment.tenants.push(apartment.currentTenant);
+    }
+    apartment.tenants.push(tenantId);
+    return await update(apartment._id, {
+        currentTenant: tenantId,
+        tenants: apartment.tenants,
+    });
 }
 
 const apartmentService = {
-    create, getAll, findById, edit, deleteApartment, update, addTenant
+    create, getAll, findById, edit, deleteApartment, update, addTenant, find
 }
 
 export default apartmentService;
