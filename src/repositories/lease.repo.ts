@@ -3,7 +3,7 @@ import { CreateLeaseDto } from "../data/dto/lease.dto";
 import { ILeaseSchema } from "../data/interfaces/lease.interface";
 import { LeaseEntity as leaseSchema } from "../models/lease.entity";
 
-const create = async (lease: CreateLeaseDto, files: string[]): Promise<ILeaseSchema> => {
+const createLease = async (lease: CreateLeaseDto, files: string[]): Promise<ILeaseSchema> => {
     try {
         const currentLease = new leaseSchema({
             ...lease,
@@ -15,48 +15,40 @@ const create = async (lease: CreateLeaseDto, files: string[]): Promise<ILeaseSch
         const savedLease: ILeaseSchema = await currentLease.save();
         return savedLease;
     } catch (error) {
-        console.error('Error create tenant:', error);
+        console.error('Error creating lease:', error);
         throw error;
     }
-}
-
-const findByObjectId = async (id: string): Promise<ILeaseSchema | null> => {
-    try {
-        return await leaseSchema.findById(id).exec();
-    } catch (error) {
-        console.error('Error finding tenant:', error);
-        throw error;
-    }
-}
+};
 
 const findById = async (id: string): Promise<ILeaseSchema | null> => {
     try {
-        return await leaseSchema.findOne({ id }).exec();
+        return await leaseSchema.findById(id).exec();
     } catch (error) {
-        console.error('Error finding tenant:', error);
+        console.error('Error finding lease by ID:', error);
         throw error;
     }
-}
+};
 
-const update = async (editExpense: EditExpenseDto, files: string[]): Promise<ILeaseSchema> => {
+const updateLease = async (editExpense: EditExpenseDto, files: string[]): Promise<ILeaseSchema> => {
     try {
-        const existingExpense = await findById(editExpense.id);
-        if (!existingExpense) {
-            throw Object.assign(new Error('Expense not found'), { statusCode: 404 });
+        const existingLease = await findById(editExpense.id);
+        if (!existingLease) {
+            throw Object.assign(new Error('Lease not found'), { statusCode: 404 });
         }
         const updateExpense = {
             ...editExpense,
-            files: editExpense.files.concat(files)
-        }
-        return await leaseSchema.findOneAndUpdate(existingExpense._id, updateExpense, { new: true });
+            files: editExpense.files.concat(files),
+        };
+        return await leaseSchema.findByIdAndUpdate(existingLease._id, updateExpense, { new: true });
     } catch (error) {
-        console.error('Update tenant error:', error);
+        console.error('Error updating lease:', error);
         throw error;
     }
-}
+};
 
 const leaseRepository = {
-    create, update
-}
+    create: createLease,
+    update: updateLease,
+};
 
-export default leaseRepository
+export default leaseRepository;

@@ -1,14 +1,16 @@
+import { FilterQuery } from "mongoose";
 import { EditExpenseDto } from "../data/dto/expense.dto";
 import { CreateLeaseDto } from "../data/dto/lease.dto";
 import { ILeaseSchema } from "../data/interfaces/lease.interface";
+import { ILeaseApartmentSchema } from "../data/interfaces/relationship.interface";
 import { ITenantSchema } from "../data/interfaces/tenant.interface";
-import { UserJwtPayload } from "../data/interfaces/user.interfaces";
+import { IUserSchema } from "../data/interfaces/user.interfaces";
 import leaseRepository from "../repositories/lease.repo";
 import leaseApartmentRepository from "../repositories/lease_apartment.repo";
 import apartmentService from "./apartment.service";
 import userService from "./user.service";
 
-const create = async (lease: CreateLeaseDto, files: string[], user: UserJwtPayload): Promise<ILeaseSchema> => {
+const create = async (lease: CreateLeaseDto, files: string[], user: IUserSchema): Promise<ILeaseSchema> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
@@ -35,7 +37,7 @@ const create = async (lease: CreateLeaseDto, files: string[], user: UserJwtPaylo
     }
 }
 
-const update = async (updateExpense: EditExpenseDto, files: string[], user: UserJwtPayload): Promise<ILeaseSchema> => {
+const update = async (updateExpense: EditExpenseDto, files: string[], user: IUserSchema): Promise<ILeaseSchema> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
@@ -50,8 +52,18 @@ const update = async (updateExpense: EditExpenseDto, files: string[], user: User
     }
 }
 
+const find = async (findObject: FilterQuery<ILeaseApartmentSchema>): Promise<ILeaseApartmentSchema[]> => {
+    return await leaseApartmentRepository.find(findObject);
+}
+
+async function findPopulatedLeaseApartments(findObject: FilterQuery<ILeaseApartmentSchema>): Promise<ILeaseApartmentSchema[]> {
+    return await leaseApartmentRepository.findPopulatedLeasesApartment(findObject)
+}
+
+
+
 const leaseService = {
-    create, update,
+    create, update, find, findPopulatedLeaseApartments
 }
 
 export default leaseService;

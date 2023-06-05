@@ -12,8 +12,20 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const getDocuments = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { user } = req;
+        if (user) {
+            const documents = await userService.getDocuments(user)
+            return res.status(200).send(documents)
+        }
+    } catch (error) {
+        next(error);
+    }
+
+}
 const userController = {
-    register
+    register, getDocuments
 }
 
 export default userController;

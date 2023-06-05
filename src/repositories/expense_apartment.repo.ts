@@ -6,43 +6,45 @@ const find = async (findObject: FilterQuery<IExpenseApartmentSchema>): Promise<I
     try {
         return await expenseApartmentSchema.find(findObject);
     } catch (error) {
-        console.error('Error finding apartment:', error);
+        console.error('Error finding expense apartment:', error);
         throw error;
     }
-}
+};
 
-const findPopulatedExpenses = async (findObject: FilterQuery<IExpenseApartmentSchema>): Promise<IExpenseApartmentSchema[]> => {
+const findPopulatedExpensesApartment = async (findObject: FilterQuery<IExpenseApartmentSchema>): Promise<IExpenseApartmentSchema[]> => {
     try {
         const expenses = await find(findObject);
         const populatedExpenses = await expenseApartmentSchema.populate(expenses, [
             { path: 'expense' },
-            { path: 'apartment', select: 'name' }
+            { path: 'apartment', select: 'name' },
         ]);
 
         return populatedExpenses;
     } catch (error) {
-        console.error('Error finding apartment:', error);
+        console.error('Error finding populated expenses apartment:', error);
         throw error;
     }
-}
+};
 
-const create = async (apartmentId: Types.ObjectId | string, expenseId: Types.ObjectId | string, ownerId: Types.ObjectId | string): Promise<IExpenseApartmentSchema> => {
+const createExpenseApartment = async (apartmentId: Types.ObjectId | string, expenseId: Types.ObjectId | string, ownerId: Types.ObjectId | string): Promise<IExpenseApartmentSchema> => {
     try {
-        const newExpense = new expenseApartmentSchema({
+        const newExpenseApartment = new expenseApartmentSchema({
             expense: expenseId,
             apartment: apartmentId,
-            owner: ownerId
-        })
-        const savedObject: IExpenseApartmentSchema = await newExpense.save();
-        return savedObject;
+            owner: ownerId,
+        });
+        const savedExpenseApartment: IExpenseApartmentSchema = await newExpenseApartment.save();
+        return savedExpenseApartment;
     } catch (error) {
-        console.error('Error create expense relationship:', error);
+        console.error('Error creating expense apartment:', error);
         throw error;
     }
-}
+};
 
 const expenseApartmentRepository = {
-    create, find, findPopulatedExpenses
-}
+    create: createExpenseApartment,
+    find,
+    findPopulatedExpensesApartment,
+};
 
-export default expenseApartmentRepository
+export default expenseApartmentRepository;

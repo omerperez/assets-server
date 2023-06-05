@@ -4,38 +4,29 @@ import { ExpenseEntity as expenseSchema } from "../models/expense.entity";
 
 const create = async (expense: CreateExpenseDto, files: string[]): Promise<IExpenseSchema> => {
     try {
-        const currentExpense = new expenseSchema({
+        const newExpense = new expenseSchema({
             ...expense,
             files,
             isDelete: false,
             editDate: new Date(),
             createDate: new Date(),
         });
-        const savedExpense: IExpenseSchema = await currentExpense.save();
+        const savedExpense: IExpenseSchema = await newExpense.save();
         return savedExpense;
     } catch (error) {
-        console.error('Error create tenant:', error);
+        console.error('Error creating expense:', error);
         throw error;
     }
-}
-
-const findByObjectId = async (id: string): Promise<IExpenseSchema | null> => {
-    try {
-        return await expenseSchema.findById(id).exec();
-    } catch (error) {
-        console.error('Error finding tenant:', error);
-        throw error;
-    }
-}
+};
 
 const findById = async (id: string): Promise<IExpenseSchema | null> => {
     try {
-        return await expenseSchema.findOne({ id }).exec();
+        return await expenseSchema.findById(id).exec();
     } catch (error) {
-        console.error('Error finding tenant:', error);
+        console.error(`Error finding expense by ID (${id}):`, error);
         throw error;
     }
-}
+};
 
 const update = async (editExpense: EditExpenseDto, files: string[]): Promise<IExpenseSchema> => {
     try {
@@ -43,19 +34,23 @@ const update = async (editExpense: EditExpenseDto, files: string[]): Promise<IEx
         if (!existingExpense) {
             throw Object.assign(new Error('Expense not found'), { statusCode: 404 });
         }
+        const updatedFiles = [...existingExpense.files, ...files]; // Consider handling duplicates here
         const updateExpense = {
             ...editExpense,
-            files: editExpense.files.concat(files)
-        }
+            files: updatedFiles,
+        };
         return await expenseSchema.findOneAndUpdate(existingExpense._id, updateExpense, { new: true });
     } catch (error) {
-        console.error('Update tenant error:', error);
+        console.error('Error updating expense:', error);
         throw error;
     }
-}
+};
+
 
 const expenseRepository = {
-    create, update
-}
+    create,
+    findById,
+    update
+};
 
-export default expenseRepository
+export default expenseRepository;

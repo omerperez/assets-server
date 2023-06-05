@@ -1,14 +1,15 @@
-import expenseApartmentRepository from "../repositories/expense_apartment.repo";
+import { FilterQuery, Types } from "mongoose";
 import { CreateExpenseDto, EditExpenseDto } from "../data/dto/expense.dto";
 import { IExpenseSchema, IExpensesCountPerApartmentResponse } from "../data/interfaces/expense.interface";
-import { UserJwtPayload } from "../data/interfaces/user.interfaces";
+import { IExpenseApartmentSchema } from "../data/interfaces/relationship.interface";
+import { IUserSchema } from "../data/interfaces/user.interfaces";
 import expenseRepository from "../repositories/expense.repo";
+import expenseApartmentRepository from "../repositories/expense_apartment.repo";
 import apartmentService from "./apartment.service";
-import userService from "./user.service";
 import tenantService from "./tenant.service";
-import { Types } from "mongoose";
+import userService from "./user.service";
 
-const create = async (expense: CreateExpenseDto, files: string[], user: UserJwtPayload): Promise<IExpenseSchema> => {
+const create = async (expense: CreateExpenseDto, files: string[], user: IUserSchema): Promise<IExpenseSchema> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
@@ -30,7 +31,7 @@ const create = async (expense: CreateExpenseDto, files: string[], user: UserJwtP
     }
 }
 
-const update = async (updateExpense: EditExpenseDto, files: string[], user: UserJwtPayload): Promise<IExpenseSchema> => {
+const update = async (updateExpense: EditExpenseDto, files: string[], user: IUserSchema): Promise<IExpenseSchema> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
@@ -44,6 +45,9 @@ const update = async (updateExpense: EditExpenseDto, files: string[], user: User
         throw error;
     }
 }
+async function findPopulatedExpensesApartment(findObject: FilterQuery<IExpenseApartmentSchema>): Promise<IExpenseApartmentSchema[]> {
+    return await expenseApartmentRepository.findPopulatedExpensesApartment(findObject)
+}
 
 async function getApartmentsWithExpenses(userMobile: string, apartmentId: string): Promise<any> {
     try {
@@ -51,36 +55,22 @@ async function getApartmentsWithExpenses(userMobile: string, apartmentId: string
         if (!apartment) {
             throw Object.assign(new Error('Apartment not found'), { statusCode: 403 });
         }
-        // .find(userId, { owner: userId }, "name");
-        // const apartmentIds = apartments.map((apartment) => apartment._id);
-
         const expenses = await expenseApartmentRepository
-            .findPopulatedExpenses({ apartment: apartmentId });
+            .findPopulatedExpensesApartment({ apartment: apartmentId });
 
         return {
             apartmentId: apartment._id,
             apartmentName: apartment?.name,
-            expenses: expenses,
+            expenses,
         };
-        // const result = apartmentIds.map((apartmentId) => {
-        //     const apartmentExpenses = expenses.filter(
-        //         (expense) => expense.apartment._id.toString() === apartmentId.toString()
-        //     );
-
-        //     const currentApartment = apartments.find((apartment) => apartment._id.toString() === apartmentId.toString());
-
-        //     return {
-        //         apartmentId: apartmentId.toString(),
-        //         apartmentName: currentApartment?.name,
-        //         expenses: apartmentExpenses.map((expense) => expense.expense),
-        //     };
-        // });
-
-        // return result;
     } catch (error) {
         console.error(error);
         return [];
     }
+}
+
+const find = async (findObject: FilterQuery<IExpenseApartmentSchema>): Promise<IExpenseApartmentSchema[]> => {
+    return await expenseApartmentRepository.find(findObject);
 }
 
 async function getExpensesCountForeachApartment(userId: string): Promise<IExpensesCountPerApartmentResponse[]> {
@@ -88,7 +78,7 @@ async function getExpensesCountForeachApartment(userId: string): Promise<IExpens
         const apartments = await apartmentService.find(userId, { owner: userId }, "name");
         const apartmentIds = apartments.map((apartment) => apartment._id);
 
-        const expenses = await expenseApartmentRepository.find({ apartment: { $in: apartmentIds } });
+        const expenses = await find({ apartment: { $in: apartmentIds } });
 
         const result = await Promise.all(
             apartmentIds.map(async (apartmentId) => {
@@ -124,8 +114,8 @@ async function getExpensesCountForeachApartment(userId: string): Promise<IExpens
     }
 }
 
-const expenseApartmentService = {
-    create, update, getApartmentsWithExpenses, getExpensesCountForeachApartment
+const expenseService = {
+    create, find, update, getApartmentsWithExpenses, getExpensesCountForeachApartment, findPopulatedExpensesApartment
 }
 
-export default expenseApartmentService;
+export default expenseService;

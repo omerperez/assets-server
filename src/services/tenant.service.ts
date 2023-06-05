@@ -1,16 +1,16 @@
 import { Types } from "mongoose";
 import { CreateTenantDto } from "../data/dto/tenant.dto";
 import { ITenantSchema } from "../data/interfaces/tenant.interface";
-import { UserJwtPayload } from "../data/interfaces/user.interfaces";
+import { IUserSchema } from "../data/interfaces/user.interfaces";
 import tenantRepository from "../repositories/tenant.repo";
 import apartmentService from "./apartment.service";
 import userService from "./user.service";
 
 const findById = async (tenantId: string | Types.ObjectId) => {
-    return await tenantRepository.getTenantById(tenantId);
+    return await tenantRepository.findById(tenantId);
 }
 
-const create = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<ITenantSchema> => {
+const create = async (tenant: CreateTenantDto, user: IUserSchema): Promise<ITenantSchema> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
@@ -32,7 +32,7 @@ const create = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<IT
     }
 }
 
-const update = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<ITenantSchema> => {
+const update = async (tenant: CreateTenantDto, user: IUserSchema): Promise<ITenantSchema> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
@@ -51,14 +51,14 @@ const update = async (tenant: CreateTenantDto, user: UserJwtPayload): Promise<IT
     }
 }
 
-const changeTenant = async (tenantId: string, apartmentId: string, user: UserJwtPayload): Promise<ITenantSchema> => {
+const changeTenant = async (tenantId: string, apartmentId: string, user: IUserSchema): Promise<ITenantSchema> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
         if (!currentUser) {
             throw Object.assign(new Error('User not found'), { statusCode: 404 });
         }
-        const findTenant = await tenantRepository.getTenantById(tenantId);
+        const findTenant = await tenantRepository.findById(tenantId);
         if (!findTenant) {
             throw Object.assign(new Error('Tenant not found'), { statusCode: 404 });
         }
@@ -69,7 +69,6 @@ const changeTenant = async (tenantId: string, apartmentId: string, user: UserJwt
         await apartmentService.update(currentApartment._id, {
             currentTenant: findTenant._id,
         })
-        console.log(findTenant)
         return findTenant;
     } catch (error) {
         console.error('Create tenant error:', error);
@@ -78,7 +77,7 @@ const changeTenant = async (tenantId: string, apartmentId: string, user: UserJwt
 }
 
 
-const deleteTenant = async (tenantId: string, user: UserJwtPayload): Promise<void> => {
+const deleteTenant = async (tenantId: string, user: IUserSchema): Promise<void> => {
     try {
         const { id: ownerId } = user;
         const currentUser = await userService.findById(ownerId);
