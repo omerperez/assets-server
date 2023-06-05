@@ -1,4 +1,5 @@
 import { FilterQuery, Types } from "mongoose";
+import { CustomError } from "../data/builders/customError";
 import { CreateApartmentDto, EditApartmentDto } from "../data/dto/apartment.dto";
 import { IApartmentSchema } from "../data/interfaces/apartment.interface";
 import { IUserSchema } from "../data/interfaces/user.interfaces";
@@ -32,7 +33,7 @@ class ApartmentService {
                 owner: userId
             }, selectText);
             if (!apartments || apartments.length === 0) {
-                throw Object.assign(new Error('Apartments not found'), { statusCode: 404 });
+                throw new CustomError('Apartments not found', 404);
             }
             return apartments;
         } catch (error) {
@@ -46,7 +47,7 @@ class ApartmentService {
             const apartment = await apartmentRepository.findById(apartmentId);
             const user = await userService.findByMobile(userMobile);
             if (!apartment.owner.equals(user._id)) {
-                throw Object.assign(new Error('Ownership verification failed'), { statusCode: 403 });
+                throw new CustomError('Ownership verification failed', 403);
             }
             return apartment;
         } catch (error) {
@@ -60,7 +61,7 @@ class ApartmentService {
             const { _id: userId } = user;
             const currentUser = await userService.findById(userId);
             if (!currentUser.apartments.find((apartment: Types.ObjectId) => apartment.equals(updateApartment.id))) {
-                throw Object.assign(new Error('Access Denied'), { statusCode: 401 });
+                throw new CustomError('Access Denied', 401);
             }
             return await apartmentRepository.edit(updateApartment, images, currentUser._id);
         } catch (error) {
@@ -74,7 +75,7 @@ class ApartmentService {
             const { _id: userId } = user;
             const currentUser = await userService.findById(userId);
             if (!currentUser.apartments.find((apartment: Types.ObjectId) => apartment.equals(apartmentId))) {
-                throw Object.assign(new Error('Access Denied'), { statusCode: 401 });
+                throw new CustomError('Access Denied', 401);
             }
             return await apartmentRepository.deleteApartment(apartmentId);
         } catch (error) {

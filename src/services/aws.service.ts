@@ -6,56 +6,54 @@ interface UploadedFile {
     originalname: string;
 }
 
-const uploadFile = async (dataBuffer: Buffer, filename: string): Promise<string> => {
-    const s3 = new S3();
-    const { AWS_PUBLIC_BUCKET_NAME } = process.env;
+class AWSService {
+    async uploadFile(dataBuffer: Buffer, filename: string): Promise<string> {
+        const s3 = new S3();
+        const { AWS_PUBLIC_BUCKET_NAME } = process.env;
 
-    const { Location: location } = await s3
-        .upload({
-            Bucket: AWS_PUBLIC_BUCKET_NAME as string,
-            ContentDisposition: "inline",
-            ContentType: "application/pdf",
-            Body: dataBuffer,
-            Key: `${uuid()}-${filename}`,
-        })
-        .promise();
-    return location;
+        const { Location: location } = await s3
+            .upload({
+                Bucket: AWS_PUBLIC_BUCKET_NAME as string,
+                ContentDisposition: "inline",
+                ContentType: "application/pdf",
+                Body: dataBuffer,
+                Key: `${uuid()}-${filename}`,
+            })
+            .promise();
+        return location;
+    }
+
+    async uploadSingleFile(
+        s3: S3,
+        dataBuffer: Buffer,
+        filename: string
+    ): Promise<string> {
+        const { AWS_PUBLIC_BUCKET_NAME } = process.env;
+        const { Location: location } = await s3
+            .upload({
+                Bucket: AWS_PUBLIC_BUCKET_NAME as string,
+                Body: dataBuffer,
+                Key: `${uuid()}-${filename}`,
+            })
+            .promise();
+        return location;
+    }
+
+    async uploadMultipleFiles(files: UploadedFile[]) {
+        const s3 = new S3();
+        const uploadFiles: string[] = [];
+        await Promise.all(
+            files.map(async (file) => {
+                const currentUrl = await this.uploadSingleFile(
+                    s3,
+                    file.buffer,
+                    file.originalname
+                );
+                uploadFiles.push(currentUrl);
+            })
+        );
+        return uploadFiles;
+    }
 }
 
-const uploadSingleFile = async (
-    s3: S3,
-    dataBuffer: Buffer,
-    filename: string
-): Promise<string> => {
-    const { AWS_PUBLIC_BUCKET_NAME } = process.env;
-    const { Location: location } = await s3
-        .upload({
-            Bucket: AWS_PUBLIC_BUCKET_NAME as string,
-            Body: dataBuffer,
-            Key: `${uuid()}-${filename}`,
-        })
-        .promise();
-    return location;
-}
-
-const uploadMultipleFiles = async (files: UploadedFile[]) => {
-    const s3 = new S3();
-    const uploadFiles: string[] = [];
-    await Promise.all(
-        files.map(async (file) => {
-            const currentUrl = await uploadSingleFile(
-                s3,
-                file.buffer,
-                file.originalname
-            );
-            uploadFiles.push(currentUrl);
-        })
-    );
-    return uploadFiles;
-}
-
-const awsService = {
-    uploadFile, uploadMultipleFiles
-}
-
-export default awsService;
+export default new AWSService();

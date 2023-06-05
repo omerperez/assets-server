@@ -1,4 +1,5 @@
 import { FilterQuery } from "mongoose";
+import { CustomError } from "../data/builders/customError";
 import { EditExpenseDto } from "../data/dto/expense.dto";
 import { CreateLeaseDto } from "../data/dto/lease.dto";
 import { ILeaseSchema } from "../data/interfaces/lease.interface";
@@ -10,60 +11,53 @@ import leaseApartmentRepository from "../repositories/lease_apartment.repo";
 import apartmentService from "./apartment.service";
 import userService from "./user.service";
 
-const create = async (lease: CreateLeaseDto, files: string[], user: IUserSchema): Promise<ILeaseSchema> => {
-    try {
-        const { id: ownerId } = user;
-        const currentUser = await userService.findById(ownerId);
-        if (!currentUser) {
-            throw Object.assign(new Error('User not found'), { statusCode: 404 });
+class LeaseService {
+    async create(lease: CreateLeaseDto, files: string[], user: IUserSchema): Promise<ILeaseSchema> {
+        try {
+            const { id: ownerId } = user;
+            const currentUser = await userService.findById(ownerId);
+            const currentApartment = await apartmentService.findById(lease.apartmentId, user.mobile);
+            if (!currentApartment) {
+                throw new CustomError('Apartment not found', 404);
+            }
+            const currentTenant = currentApartment.currentTenant as ITenantSchema;
+            const tenants = currentApartment.tenants as ITenantSchema[];
+            if (!currentTenant._id.equals(lease.tenantId) && !tenants.find((tenant) => tenant._id.equals(lease.tenantId))) {
+                throw new CustomError('Tenant not found', 404);
+            }
+            const newLease = await leaseRepository.create(lease, files);
+            await leaseApartmentRepository.create(
+                currentApartment._id, lease.tenantId, newLease._id, currentUser._id
+            )
+            return newLease;
+        } catch (error) {
+            console.error('Create tenant error:', error);
+            throw error;
         }
-        const currentApartment = await apartmentService.findById(lease.apartmentId, user.mobile);
-        if (!currentApartment) {
-            throw Object.assign(new Error('Apartment not found'), { statusCode: 404 });
+    }
+
+    async update(updateExpense: EditExpenseDto, files: string[], user: IUserSchema): Promise<ILeaseSchema> {
+        try {
+            const { id: ownerId } = user;
+            const currentUser = await userService.findById(ownerId);
+            if (!currentUser) {
+                throw new CustomError('User not found', 404);
+            }
+            const expense = await leaseRepository.update(updateExpense, files);
+            return expense;
+        } catch (error) {
+            console.error('Create tenant error:', error);
+            throw error;
         }
-        const currentTenant = currentApartment.currentTenant as ITenantSchema;
-        const tenants = currentApartment.tenants as ITenantSchema[];
-        if (!currentTenant._id.equals(lease.tenantId) && !tenants.find((tenant) => tenant._id.equals(lease.tenantId))) {
-            throw Object.assign(new Error('Tenant not found'), { statusCode: 404 });
-        }
-        const newLease = await leaseRepository.create(lease, files);
-        await leaseApartmentRepository.create(
-            currentApartment._id, lease.tenantId, newLease._id, currentUser._id
-        )
-        return newLease;
-    } catch (error) {
-        console.error('Create tenant error:', error);
-        throw error;
+    }
+
+    async find(findObject: FilterQuery<ILeaseApartmentSchema>): Promise<ILeaseApartmentSchema[]> {
+        return await leaseApartmentRepository.find(findObject);
+    }
+
+    async findPopulatedLeaseApartments(findObject: FilterQuery<ILeaseApartmentSchema>): Promise<ILeaseApartmentSchema[]> {
+        return await leaseApartmentRepository.findPopulatedLeasesApartment(findObject);
     }
 }
 
-const update = async (updateExpense: EditExpenseDto, files: string[], user: IUserSchema): Promise<ILeaseSchema> => {
-    try {
-        const { id: ownerId } = user;
-        const currentUser = await userService.findById(ownerId);
-        if (!currentUser) {
-            throw Object.assign(new Error('User not found'), { statusCode: 404 });
-        }
-        const expense = await leaseRepository.update(updateExpense, files);
-        return expense;
-    } catch (error) {
-        console.error('Create tenant error:', error);
-        throw error;
-    }
-}
-
-const find = async (findObject: FilterQuery<ILeaseApartmentSchema>): Promise<ILeaseApartmentSchema[]> => {
-    return await leaseApartmentRepository.find(findObject);
-}
-
-async function findPopulatedLeaseApartments(findObject: FilterQuery<ILeaseApartmentSchema>): Promise<ILeaseApartmentSchema[]> {
-    return await leaseApartmentRepository.findPopulatedLeasesApartment(findObject)
-}
-
-
-
-const leaseService = {
-    create, update, find, findPopulatedLeaseApartments
-}
-
-export default leaseService;
+export default new LeaseService();
