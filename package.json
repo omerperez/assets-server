@@ -23,7 +23,7 @@
   "homepage": "https://github.com/omerperez/assets-server#readme",
   "dependencies": {
     "argon2": "^0.30.3",
-    "aws-sdk": "^2.1386.0",
+    "aws-sdk": "^2.1389.0",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
